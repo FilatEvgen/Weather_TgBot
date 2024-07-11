@@ -12,6 +12,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.example.domain.models.sendEvent
 import org.example.domain.repository.ApiRepository
 import org.example.domain.repository.ApiRepositoryImpl
 import org.example.presentaion.controllers.ContollerRoutes.MESSAGING_ROUTE
@@ -47,6 +48,7 @@ class MessagingController {
                 val message = buildWeatherMessage(weather)
                 message(message).send(user, bot)
                 sendAdditionalMessage(user, bot)
+                sendEvent("Запрошена погода для города ${weather.city}", _client)
             }
 
             is Resource.Error -> sendErrorMessage(user, bot, weatherData.message)
