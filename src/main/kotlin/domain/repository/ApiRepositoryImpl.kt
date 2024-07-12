@@ -25,6 +25,7 @@ class ApiRepositoryImpl(private val client: HttpClient): ApiRepository {
             }.body())
         } catch (e: Exception) {
             e.printStackTrace()
+            sendErrorToMetric(e)
             val message = when (e) {
                 is ConnectException -> "Связь с сервером потеряна, попробуйте поже"
                 is TimeoutException -> "Время ожидания ответа от сервера истекло. Пожалуйста, попробуйте еще раз."
@@ -37,8 +38,7 @@ class ApiRepositoryImpl(private val client: HttpClient): ApiRepository {
     private suspend fun sendErrorToMetric(e: Exception) {
         client.post(POST_ERROR) {
             contentType(ContentType.Application.Json)
-            setBody(
-                ErrorData(
+            setBody(ErrorData(
                 type = "client",
                 source = "weather_tg_bot",
                 time = System.currentTimeMillis(),
